@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="clases.css">
+  <title>Document</title>
+</head>
+<body>
+  <div>
+    <h3>Introducción de productos a la factura</h3>
+    <label for="producto">Producto:</label>
+    <input type="text" id="producto" />
+    <label for="cantidad">Cantidad:</label>
+    <input type="number" id="cantidad" value="0" />
+    <label for="precio-unitario">Precio unitario:</label>
+    <input type="number" id="precio-unitario" value="0" />
+    <button id="añadir">Añadir</button>
+  </div>
+  
+  <table rules="groups">
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Cantidad</th>
+        <th>Precio unitario</th>
+        <th>Precio total</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <th colspan="4">Base imponible</th>
+        <th><span id="base-imponible">0</span>€</th>
+      </tr>
+      <tr>
+        <th colspan="4" datos-iva="0.21">IVA 21%</th>
+        <th><span id="iva">0</span>€</th>
+      </tr>
+      <tr>
+        <th colspan="4">Total factura</th>
+        <th><span id="total">0</span>€</th>
+      </tr>
+    </tfoot>
+    <tbody>
+    </tbody>
+  </table>
+</body>
+<script>
+  // Get the elements in the table footer.
+  const baseImponible = document.getElementById('base-imponible')
+  const iva = document.getElementById('iva')
+  const total = document.getElementById('total')
+
+  // Add an event in the 'añadir' button when clicked. It houses all of the logic.
+  // A new record will be inserted and the total prices will be updated when the button is clicked.
+  document.getElementById('añadir').addEventListener('click', ev => {
+    // Prevent the default behaviour of the button to prevent the page from reloading.
+    ev.preventDefault()
+
+    // Get the input elements.
+    const productoInput = document.getElementById('producto')
+    const cantidadInput = document.getElementById('cantidad')
+    const precioUnitarioInput = document.getElementById('precio-unitario')
+
+    // Create a new row.
+    const row = document.createElement('tr')
+
+    /** Create the cells of the row.
+     * There is one for each header in the table.
+     * They use a classes to identify them inside the row.**/
+
+    // Create the 'producto' cell.
+    const productoEl = document.createElement('td')
+    const productoText = document.createElement('span')
+    productoText.textContent = productoInput.value + ' '
+    productoEl.appendChild(productoText)
+
+    // Create the 'detalles' link inside of 'producto'
+    const detalle = document.createElement('a')
+    detalle.href = '#'
+    detalle.textContent = '(detalles)'
+    productoEl.appendChild(detalle)
+
+    // Create the 'cantidad' cell. 
+    const cantidadEl = document.createElement('td')
+    cantidadEl.textContent = cantidadInput.value
+    cantidadEl.class = 'cantidad'
+
+    // Create the 'precio unitario' cell. 
+    const precioUnitarioEl = document.createElement('td')
+    precioUnitarioEl.innerHTML = `<span class="precioUnitario">${precioUnitarioInput.value}</span>€`
+
+    // Create the 'precio total' cell.
+    // 'cantidad' and 'precio unitario' are multiplyied in order to get this value.
+    const precioTotalEl = document.createElement('td')
+    const precioTotal = precioUnitarioInput.value * cantidadInput.value
+    precioTotalEl.innerHTML = `<span class="precioTotal">${precioTotal}</span>€`
+
+    // Create the remove link.
+    const eliminar = document.createElement('a')
+    eliminar.href = '#'
+    eliminar.textContent = '(eliminar)'
+
+    // Add all the elements to the row and append the row to the table body
+    row.append(productoEl, cantidadEl, precioUnitarioEl, precioTotalEl, eliminar)
+    document.querySelector('table tbody').appendChild(row)
+
+    // Reset the input fields.
+    productoInput.value = ''
+    cantidadInput.value = ''
+    precioUnitarioInput.value = ''
+
+    // Recalculate the prices in the table footer
+    recalcular(+baseImponible.textContent + +precioTotal)
+
+    // Calculate and replace all the prices in the table footer using the base price.
+    // Add a new event to the 'detalle' link to show the record's data in a pop-up when clicked.
+    detalle.addEventListener('click', ev => {
+      const producto = row.querySelector('td :first-child').textContent
+      const precioUnitario = row.querySelector('.precioUnitario').textContent
+      const cantidad = row.querySelector('.precioUnitario').textContent
+      const precioTotal = row.querySelector('.precioTotal').textContent
+
+      alert(`
+      Detalles del producto:
+      - Producto: ${producto}
+      - Precio unitario: ${precioUnitario}
+      - Cantidad: ${cantidad}
+      - Precio total: ${precioTotal}
+      `)
+    })
+
+    // Add an event to the 'eliminar' link that removes the row it's in and recalculates the price when clicked.
+    eliminar.addEventListener('click', ev => {
+      recalcular(baseImponible.textContent - precioTotal)
+      row.parentElement.removeChild(row)
+    })
+  })
+
+  function recalcular(base) {
+      baseImponible.textContent = base
+      iva.textContent = base * 0.21
+      total.textContent = base + (base * 0.21)
+  }
+</script>
+</html>

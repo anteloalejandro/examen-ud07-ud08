@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>EJERCICIO 2</title>
+<style type="text/css">
+	#primero,
+	#segundo,
+	#resultado {
+		width: 150px;
+		height: 150px;
+		border: thin solid silver;
+		background: #F5F5F5;
+		float: left;
+		margin: 20px;
+		font-size: 6em;
+		color: #333;
+		text-align: center;
+		padding: 5px;
+		font-family: Arial, Helvetica, sans-serif;
+	}
+
+	#primero p,
+	#segundo p,
+	#resultado p {
+		margin: .2em 0;
+	}
+
+	#resultado {
+		margin-left: 1.3em;
+		border-color: black;
+	}
+
+	.clear {
+		clear: both;
+	}
+
+	#compara,
+	#genera {
+		font-size: 1.2em;
+		margin-left: 8em;
+	}
+</style>
+</head>
+
+<body>
+	<input id="genera" type="button" value="Genera !!">
+	<div id="primero"></div>
+	<div id="segundo"></div>
+	<div class="clear"></div>
+	<input id="compara" type="button" value="<< Compara >>" />
+	<div id="resultado"></div>
+</body>
+
+<script>
+	function genera() {
+		// Create two random numbers from 0 to 9
+		var numero1 = parseInt(Math.random() * 10);
+		var numero2 = parseInt(Math.random() * 10);
+		// Select the first child element of 'primero' and 'segundo'. 
+		var parrafoAnterior1 = primero.firstChild;
+		var parrafoAnterior2 = segundo.firstChild;
+		// Create a new paragraph element and add the first random number as text.
+		var parrafo1 = document.createElement("p");
+		var texto1 = document.createTextNode(numero1);
+		parrafo1.appendChild(texto1);
+		// Replace the first child of 'primero' with new newly created element.
+		// If it doesn't have a child, add the new element instead of replacing an existing one.
+		if (parrafoAnterior1 != null) {
+			primero.replaceChild(parrafo1, parrafoAnterior1);
+		}
+		else {
+			primero.appendChild(parrafo1);
+		}
+		// Create a new paragraph element and add the second random number as text.
+		var parrafo2 = document.createElement("p");
+		var texto2 = document.createTextNode(numero2);
+		parrafo2.appendChild(texto2);
+		// Replace the first child of 'segundo' with new newly created element.
+		// If it doesn't have a child, add the new element instead of replacing an existing one.
+		if (parrafoAnterior2 != null) {
+			segundo.replaceChild(parrafo2, parrafoAnterior2);
+		}
+		else {
+			segundo.appendChild(parrafo2);
+		}
+	}
+
+	function compara() {
+		// Get both child elements in the 'primero' and 'segundo' elements. 
+		// The function stops here if either of them its empty.
+		var parrafo1 = primero.firstChild;
+		var parrafo2 = segundo.firstChild;
+		if (!(parrafo1 && parrafo2)) return
+		// Get the numeric value from both of them.
+		var numero1 = parseInt(parrafo1.firstChild.nodeValue);
+		var numero2 = parseInt(parrafo2.firstChild.nodeValue);
+		// Store the element having the greatest value in another variable.
+		var parrafoMayor = (numero1 > numero2) ? parrafo1 : parrafo2;
+		// Get the element that contains the result and its child.
+		var resultado = document.getElementById("resultado");
+		var parrafoAnterior = resultado.firstChild;
+		// Move the element with the greatest value to the result element.
+		// If the result already has a child element, replace it, if it doesn't, append it.
+		if (parrafoAnterior != null) {
+			resultado.replaceChild(parrafoMayor, parrafoAnterior);
+		}
+		else {
+			resultado.appendChild(parrafoMayor);
+		}
+	}
+
+	// Get the 'primero' and 'segundo elements'
+	var primero = document.getElementById("primero");
+	var segundo = document.getElementById("segundo");
+
+	// Add an event that runs a function that adds a random number to 'primero' and 'segundo' when clicked.
+	document.getElementById('genera').addEventListener('click', genera)
+
+	// Add an event that runs a function that places in the result the element with the greatest value when clicked.
+	document.getElementById('compara').addEventListener('click', compara)
+
+</script>
+
+</html>
